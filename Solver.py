@@ -2,13 +2,12 @@ from typing import List, Tuple
 import json
 with open("wordles.json", 'r') as f:
     word_list:List[str] = json.load(f)
-# guess = input("what is the word you guessed? ")
-# colors = input("what was the letter colors? g = green y = yellow '-' = gray")
+
 green:List[Tuple[str, int]] = [('0', -1),('0', -2),('0', -3),('0', -4),('0', -5)]
 yellow:List[Tuple[str, List[int]]] = []
 gray:List[str] = []
 
-#Sorting input
+# Sorts user input and categorizes letters into green, yellow, and gray lists
 def sorting():
     guess = input("what is the word you guessed?:").lower()
     colors = input("what was the letter colors? g = green y = yellow '-' = gray:").lower()
@@ -17,7 +16,7 @@ def sorting():
         if c == 'g':
             green[i] = (guess[i],i)
         elif c == 'y':
-            for idx, (l, p) in enumerate(yellow):
+            for l, p in yellow:
                 if l  == guess[i]:
                     if i not in p:
                         p.append(i)
@@ -29,7 +28,7 @@ def sorting():
     remove_word()
     print(word_list)
 
-#magic matching
+# Filters words based on letter position feedback (green/yellow/gray)
 def remove_word():
     for w in word_list[:]:
         removed = False

@@ -36,18 +36,23 @@ def remove_word():
             word_list.remove(w)
             continue
                 
-        for c,p in yellow:
-            if any(w[i] == c for i in p):
+        for c, p in yellow:
+            # must contain the letter somewhere
+            if c not in w:
                 word_list.remove(w)
                 removed = True
                 break
-            else:
+
+            # must NOT be in any forbidden position
+            if any(w[i] == c for i in p):
                 word_list.remove(w)
                 removed = True
                 break
         
         if removed : continue
         for c,p in green:
+            if p < 0:
+                continue
             if w[p] != c:
                 word_list.remove(w)
 

@@ -79,6 +79,9 @@ def remove_word():
                 continue
             if w[p] != c:
                 word_list.remove(w)
+                removed = True
+                break
+        if removed: continue
 
 sorting()
 guess = input("guessed?(y/n)").lower()

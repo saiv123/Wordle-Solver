@@ -57,8 +57,9 @@ def remove_word():
         removed = False
         if any(c in w for c in gray):
             word_list.remove(w)
+            removed = True
             continue
-                
+        if removed : continue      
         for c, p in yellow:
             # must contain the letter somewhere
             if c not in w:

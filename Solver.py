@@ -7,11 +7,21 @@ with open("wordles.json", 'r') as f:
 green:List[Tuple[str, int]] = [('0', -1),('0', -2),('0', -3),('0', -4),('0', -5)]
 yellow:List[Tuple[str, List[int]]] = []
 gray:List[str] = []
+max_counts: dict = {}
 
 # Sorts user input and categorizes letters into green, yellow, and gray lists
 def sorting():
-    guess = input("what is the word you guessed?: ").lower()
-    colors = input("what was the letter colors? g = green y = yellow '-' = gray: ").lower()
+    while True:
+        guess = input("what is the word you guessed?: ").lower()
+        if len(guess) == 5 and guess.isalpha():
+            break
+        print("Please enter exactly 5 letters.")
+
+    while True:
+        colors = input("what was the letter colors? g = green y = yellow '-' = gray: ").lower()
+        if len(colors) == 5 and all(c in 'gy-' for c in colors):
+            break
+        print("Please enter exactly 5 characters using only g, y, or -.")
 
     guess_counts = defaultdict(int)
     confirmed_counts = defaultdict(int)
@@ -48,6 +58,12 @@ def sorting():
         if confirmed_counts[letter] == 0:
             if letter not in gray:
                 gray.append(letter)
+
+    # ---- Track exact upper bounds for repeated letters ----
+    for letter, g_count in guess_counts.items():
+        if g_count > confirmed_counts[letter]:
+            max_counts[letter] = confirmed_counts[letter]
+
     remove_word()
     print(word_list)
 
@@ -59,7 +75,13 @@ def remove_word():
             word_list.remove(w)
             removed = True
             continue
-        if removed : continue      
+        if removed: continue
+        for letter, max_count in max_counts.items():
+            if w.count(letter) > max_count:
+                word_list.remove(w)
+                removed = True
+                break
+        if removed: continue
         for c, p in yellow:
             # must contain the letter somewhere
             if c not in w:

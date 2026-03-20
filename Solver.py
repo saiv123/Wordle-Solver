@@ -8,6 +8,7 @@ green:List[Tuple[str, int]] = [('0', -1),('0', -2),('0', -3),('0', -4),('0', -5)
 yellow:List[Tuple[str, List[int]]] = []
 gray:List[str] = []
 max_counts: dict = {}
+min_counts: dict = {}
 
 # Sorts user input and categorizes letters into green, yellow, and gray lists
 def sorting():
@@ -59,10 +60,11 @@ def sorting():
             if letter not in gray:
                 gray.append(letter)
 
-    # ---- Track exact upper bounds for repeated letters ----
+    # ---- Track minimum and maximum letter counts ----
     for letter, g_count in guess_counts.items():
         if g_count > confirmed_counts[letter]:
             max_counts[letter] = confirmed_counts[letter]
+        min_counts[letter] = max(min_counts.get(letter, 0), confirmed_counts[letter])
 
     remove_word()
     print(word_list)
@@ -73,11 +75,15 @@ def remove_word():
         removed = False
         if any(c in w for c in gray):
             word_list.remove(w)
-            removed = True
             continue
-        if removed: continue
         for letter, max_count in max_counts.items():
-            if w.count(letter) > max_count:
+            if letter not in gray and w.count(letter) > max_count:
+                word_list.remove(w)
+                removed = True
+                break
+        if removed: continue
+        for letter, min_count in min_counts.items():
+            if w.count(letter) < min_count:
                 word_list.remove(w)
                 removed = True
                 break
